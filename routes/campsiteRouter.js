@@ -8,18 +8,23 @@ const campsiteRouter = express.Router();
 campsiteRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => res.sendStatus(200) )
 .get(cors.cors, (req, res, next) => {
+
     Campsite.find()
     .populate('comments.author')
     .then(campsites => {
+
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(campsites);
     })
     .catch(err => next(err));
 })
-.post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+    console.log(`req = ${ req }`);
+    console.log(`req user id: ${req.user._id}`);
     Campsite.create(req.body)
     .then(campsite => {
+ 
         console.log('Campsite Created ', campsite);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -27,7 +32,9 @@ campsiteRouter.route('/')
     })
     .catch(err => next(err));
 })
-.put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
+    console.log(`req = ${ req }`);
+    console.log(`req user id: ${req.user._id}`);
     res.statusCode = 403;
     res.end('PUT operation not supported on /campsites');
 })
